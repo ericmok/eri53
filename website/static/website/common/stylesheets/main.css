@@ -1,8 +1,9 @@
 .sidebar {
+  margin-top: 1em;
   /* This is exposed as well as positionally in a nav list */
 }
 .sidebar .logo {
-  margin: 1em 0 1em 1.8em;
+  margin: 1em 0 1em 1.05em;
 }
 .sidebar .logo img {
   display: inline-block;
@@ -14,10 +15,10 @@
   }
 }
 .sidebar .nav-link {
-  padding: 0.8em 1.2em;
+  padding: 0.5em 0.7em;
   display: block;
-  border-radius: 8px;
-  background-color: #FFF;
+  border-radius: 2px;
+  background-color: #EEE;
   font-size: 2em;
   -webkit-transition: background-color 0.3s ease;
   -o-transition: background-color 0.3s ease;
@@ -28,8 +29,16 @@
   background-color: #DEDEDE;
 }
 .sidebar .nav-link.active {
-  background-color: #ACACAC;
+  background-color: #707070;
   color: #FEFEFE;
+}
+@media (max-width: 990px) {
+  .sidebar .nav-link {
+    font-size: 1.5em;
+  }
+}
+.sidebar nav {
+  padding: 1em;
 }
 .sidebar nav ul {
   margin: 0em;
@@ -44,10 +53,10 @@
   }
 }
 .sidebar nav ul > li > a {
-  padding: 0.8em 1.2em;
+  padding: 0.5em 0.7em;
   display: block;
-  border-radius: 8px;
-  background-color: #FFF;
+  border-radius: 2px;
+  background-color: #EEE;
   font-size: 2em;
   -webkit-transition: background-color 0.3s ease;
   -o-transition: background-color 0.3s ease;
@@ -58,11 +67,31 @@
   background-color: #DEDEDE;
 }
 .sidebar nav ul > li > a.active {
-  background-color: #ACACAC;
+  background-color: #707070;
   color: #FEFEFE;
+}
+@media (max-width: 990px) {
+  .sidebar nav ul > li > a {
+    font-size: 1.5em;
+  }
 }
 .content .bio-info {
   display: block;
   margin: 0 0 2em 0.5em;
   color: #888;
+}
+.projects {
+  margin-top: 3em;
+}
+.projects .projects-list .icon {
+  width: 100px;
+  height: auto;
+}
+.projects .projects-list > li {
+  margin: 0 0 2em 0;
+  list-style-type: none;
+  border-bottom: solid 1px #DDD;
+}
+.projects .projects-list > li:first-child {
+  margin-top: 3.4em;
 }

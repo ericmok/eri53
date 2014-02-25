@@ -1,7 +1,8 @@
-@sidebar-left-padding: 1.2em;
+@sidebar-left-padding: 0.7em;
 
 .sidebar
 {
+    margin-top: 1em;
     
     .logo
     {
@@ -22,11 +23,11 @@
     /* This is exposed as well as positionally in a nav list */
     .nav-link
     {
-        padding: 0.8em @sidebar-left-padding;
+        padding: 0.5em @sidebar-left-padding;
         display: block;
 
-        border-radius: 8px;
-        background-color: #FFF;
+        border-radius: 2px;
+        background-color: #EEE;
 
         font-size: 2em;
 
@@ -42,13 +43,20 @@
         
         &.active
         {
-            background-color: #ACACAC;
+            background-color: #707070;
             color: #FEFEFE;
+        }
+        
+        @media(max-width: 990px)
+        {
+            font-size: 1.5em;
         }
     }
     
     nav 
     {
+        padding: 1em;
+        
         ul
         {
             margin: 0em;
@@ -70,5 +78,5 @@
             }   
         }
     }
-    
+        
 }
