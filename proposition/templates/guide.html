@@ -1,0 +1,293 @@
+{% extends 'base.html' %}
+
+{% block scripts%}
+	<style>
+		.proposition
+		{
+			border: solid 1px #DDD;
+			padding: 0.8em;
+			height: 1em;
+		}
+		.propText
+		{
+			/*width: 300px;*/
+			text-align: left;
+		}
+		.propLinks
+		{
+			/*width: *px;*/
+			text-align: right;
+		}
+		b
+		{
+			font-weight: bold;
+		}
+		pre
+		{
+			background: #DDD;
+		}
+	</style>
+
+	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc1/css/bootstrap.min.css" rel="stylesheet" />
+
+	<script>var tacowrap = {};</script>
+	<script src="{{ STATIC_URL }}common/js/jquery-2.0.0.min.js"></script>
+	<script src="{{ STATIC_URL }}common/js/moment-2.1.0.min.js"></script>
+	<script src="{{ STATIC_URL }}proposition/js/build.js"></script>
+	
+	<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+	
+	<script>
+		$(document).ready(function() {
+	
+			window.propositionExplorer = new tacowrap.prop.PropositionExplorer("propositionExplorer");
+			propositionExplorer.initialize();
+			propositionExplorer.generateElement();
+			
+			$("#propositionExplorer").append( propositionExplorer.domElement );
+			
+		});
+	</script>
+{% endblock %}
+
+{% block content %}
+
+	<div class="propositionWrapper" class="container">
+				
+		<div class="row" style="padding: 1em;">
+			
+			<div class="col-sm-8 col-sm-offset-2">
+
+				<h2>My first RESTful-like API built entirely from scratch...</h2>
+				<h4>
+					A logical graph as a web-service for worldwide collaboration in exercises of logic.
+				</h4>
+				
+				<a href="/proposition/vision">
+					<h2>
+						What is this?
+					</h2>
+				</a>				
+				<p>
+					In your Javascript console (Press F12 if you are on Chrome and click the console button), type this:
+				</p>
+				<br/>
+				<pre>
+					<code class="prettyprint" >
+var proposition = new tacowrap.prop.Proposition();
+proposition.text = "Life is full of happiness.";
+proposition.create();		
+
+proposition; // For the console to print the proposition's fields
+					</code>
+				</pre>
+				<p>
+					This makes a new proposition. You can create(), update(), and load(pk) a proposition.
+					Type "proposition" again to see its fields updated.
+				</p>
+				<p>
+					"Life is full of happiness." This proposition can be considered an a posteriori observation.
+					Over many observations, one can conclude that it is statistically likely to be true in general. 
+					However, it will not have "axiom status" unless voted in by either admins or other users. 
+					Let's be a little cynical and update the proposition so it is more agreeably accurate:
+				</p>
+<pre>
+					<code class="prettyprint" >
+proposition.text = "Life is full of suffering.";
+proposition.update();
+
+proposition; // For the console to print the proposition's fields
+					</code>
+				</pre>
+							
+				
+				<p>
+					Some notes:
+					<ul>
+						<li>These commands execute AJAX.</li> 
+						<li>A 200 OK status code indicates that the command executed with no problems.</li>
+						<li>Other status codes like 304, 404 indicate situations where the proposition was not found.</li>
+						<li>An object containing the error, if there is one is returned as JSON.</li>
+						<li>There are fields that are not updateable such as vote. You cannot control how many
+						people vote on your proposition, but you can read the field.</li>
+						<li>There is no current implementation of auth, so anybody can go screw with my database right now...</li>
+					</ul>
+				 </p>
+				 <p>
+				 	Let's deal with collections! In many RESTful api's there is a construct of collections.
+				 	Dealing with a singular resource vs plural resources can actually be rather elegant.<br/>
+				 	I've chosen to create a direct mapping of server resources and Javascript objects.<br/>
+				 	But how do we access a collection of a type of resource? Do I have to create a new 
+				 	plural resource object?
+				 </p>
+				 <p> 				 	
+				 	I winded up re-inventing what Django did - to have some sort of manager object that deals with collections
+				 	which can be referred to from the singular model. This collection object is available from
+				 	the object's prototype. 
+				 	For convenience, an instance of the singular model itself has a pointer to the prototype collection object. 
+				 </p>
+				<pre>
+					<code class="prettyprint" >
+proposition.collection.all();
+					</code>
+				</pre>
+				<p>
+					OR
+				</p>
+				<pre>
+					<code class="prettyprint">
+tacowrap.prop.Proposition.collection.all();
+
+					</code>
+				</pre>
+				<p>
+					Either code returns a jQuery promise which can then be used for further processing.
+					This was something not designed in foresight which is why the return type seems so inconsistent...
+				</p>
+			
+				<h3>Entailments</h3>
+				<p>
+					Let's say you have a logical derivation. You can pass on a list of premises as the 
+					id of the propositions you want to derive from. The conclusion can either be a primary key of the
+					proposition you want to point to, or can be the text of the conclusion directly...
+				</p>
+				<pre>
+					<code class="prettyprint">
+var humansLivingProposition = new tacowrap.prop.Proposition();
+humansLivingProposition.text = "Humans are living";
+humansLivingProposition.create();
+					
+var entailment = new tacowrap.prop.Entailment();
+entailment.premises = [proposition.pk, humansLivingProposition.pk]
+entailment.reason="Substitution"
+entailment.conclusion = "Humans live a life full of suffering";
+entailment.create();
+
+entailment; // For console to print the fields
+					</code>
+				</pre>
+				<p>
+					The conclusion is derived from two premises:
+					<ul>
+						<li>Life is full of suffering</li>
+						<li>Humans are living.</li>
+					</ul>
+				</p>
+				<p>
+					To see all premises in the logical graph, call:
+				</p>
+				<code class="prettyprint">
+				tacowrap.prop.Proposition.collection.premises()
+				</code>
+				<p>
+					To see all conclusions that derive from a list of premises, call:
+				</p>
+				<code class="prettyprint">
+				tacowrap.prop.Proposition.collection.premises()
+				</code>
+				<p>
+					Using the premises, you can visit the conclusions derived from them. 
+					Unfortunately, most non-trivial entailments will contain multiple premises. 
+					It is actually easier to visit the graph <strong>backwards</strong> starting
+					from the conclusions. Misfortune...The same conclusion may be derived from more 
+					than a single set of premises. This mess looks like:
+				</p>
+				<code class="prettyprint">
+					// Get entailment that uses a set of premises<br/>
+					tacowrap.prop.Entailment.collection.getEntailmentsContainingPremises([pk0, pk1,...]);<br/>
+					<br/>
+					// Get entailments containing conclusion with pk<br/> 
+					tacowrap.prop.Entailment.collection.havingConclusion(pk); <br/>
+				</code>
+				<img src="{{ STATIC_URL }}proposition/images/logicalGraph2.jpg" class="img-responsive" />
+				<p>
+					Whereas Propositions act like nodes, Entailments are the edges. I have depicted this as a tree,
+					but sets of propositions may actually entail already existing propositions. If there is a cycle, then
+					a circular reasoning fallacy exists! This is the awesomeness that is the logical graph.
+				</p>
+				<p>				
+					At any node or edge, should be the ability for a user to comment on its validity.
+					<ul>
+						<li>Propositions that are voted low will affect propositions that derive from it.</li>
+						<li>Entailments that create a proposition for which an inverse of that proposition exists will constitute a fallacy.</li>	
+					</ul>
+				</p>
+				<p>
+					These 2 models are the starting point of a server api which can be used to create a
+					rich, dynamic client side application for users to contribute to the logical graph.
+				</p>
+
+
+
+				<h4>The technical implementation and things I learned</h4>
+				<p>
+					I call my api REST-like instead of RESTful primarily because there are a number
+					of constraints required for a truly RESTful api which I am not focusing on at the moment.
+					More rigorous semantic constraints are definately in order!
+				</p>
+				<p>
+					My api doesn't use headers to pass information.
+					It does not use common HTTP idioms like using PUT for indempotent update and DELETE for deleting.
+					My URL scheme isn't very clean. Sometimes there is tunneling.
+				</p>
+				<p>
+					Each resource found on the server gets a direct mapping to a Javascript object. 
+					Each object is scripted in its own separate file and I use ANT to compile the files into one.
+					I'm still exploring ways to make javascript more easily scaled.
+				</p>
+				<h4>
+					Serialization matters a lot!
+				</h4>
+				<p>
+					I am dissatisfied with how Django renders models as JSON as far as REST is concerned.
+					The server is expected to return a representation of data yet it contains some
+					fields that the client should not be exposed to.
+					From the client-side, resources may be virtual, deriving its data from multiple models.
+				</p>
+				<p>
+					Different variations of serializers of resources might exist.
+					It may be a reasonable expectation that resources find themselves being versioned 
+					in long term production.   
+					"Serialization" itself could be considered a RESTful resource.
+				</p>
+				<p>
+					I found it would be useful to have some sort of abstraction to 
+					hide serialization issues related with parsing server JSON.
+				</p>
+				<p>
+					In the future, I think I will design around my javascript api around serialization constructs. 
+					Serialization, Serialization, Serialization!
+				</p>
+				<p>
+					It seems to me that motivations for building a REST-like api from scratch, 
+					would be crazy serialization cases both on server end and client end. 
+				</p>
+				<h4>
+					Asynchronous Nature of Requests to the Server  
+				</h4>
+				<p>
+					Whenever a user fetches data for a model, a network request is made. 
+					The cost of the request is a whole roundtrip, during which the dynamic application
+					should not be expected to be hung.
+					I had a hard time figuring out how to do synchronous XMLHttpRequests using jQuery.
+					After some research, I have found that Ember works around asynchronicity issues by the heavy use of
+					jQuery's promise object. Backbone also has its own mechanism for getting 
+					on-demand data fetch. In the future I need to design around this.
+				</p>
+
+				<h3>Future notes</h3>
+				<p>
+					This is my first attempt at building a RESTful-like JSON api. 
+					Making something from scratch like this makes me appreciate how thoughtful
+					Ember.js is. 
+				</p>
+				<p>
+					I have been avoiding it, but I should learn to use tastypie or djangorestframework.
+					I am not sure how flexible those frameworks are at modeling virtual resources with
+					lots of custom functionality.
+				</p>
+		</div>
+		<div style="clear:both"></div>
+	</div>
+
+{% endblock %}

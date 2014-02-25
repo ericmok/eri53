@@ -1,0 +1,57 @@
+{% extends "common/base0.html" %}
+
+{% block head %}
+	<link rel="stylesheet" href="{{ STATIC_URL }}proposition/css/cons.css" />
+	<script src="{{ STATIC_URL }}proposition/js/prop.js"></script>
+	<script>
+
+		/* 
+		* Javascript Server Interface 
+		* Should be a thin wrapper that is nearly data-only
+		* But should it invoke controller stuff or pass information?
+		*/
+
+		tacowrap.server = {};
+		tacowrap.server.propositions = [];
+
+		{% for prop in propositions %}
+			tacowrap.server.propositions.push({
+				id: {{ prop.id }},
+				text: "{{ prop.text }}"
+			});
+		{% endfor %}
+
+	</script>
+	<script src="{{ STATIC_URL }}proposition/js/cons.js"></script>
+{% endblock %}
+
+{% block content %}
+	<div class="consWrapper">
+		<form action="" method="POST" id="entailmentForm">
+			{% csrf_token %}
+			<h4>scope:</h4>
+			<div>
+				#prem: {{ numberPremises }}, <br/>
+				{% for p in premises %}
+					{{ p }}, <br/>
+				{% endfor %}
+			</div>
+			<h2>Propositions</h2>
+			<div class="" id="premises">
+			</div>
+
+			<div>
+			<h2>Logical Consequence:</h2>	
+			<input type="text" name="consequence" id="consequence" size="128" />
+
+			<h3>Reason:</h3>
+			<textarea name="reason"></textarea>
+
+			<input type="button" value="Submit" id="submitButton" />
+
+			</div>
+
+			<div style="clear: both;"></div>
+		</form>
+	</div>
+{% endblock %}

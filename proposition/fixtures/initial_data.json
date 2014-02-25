@@ -1,0 +1,10 @@
+[
+  {
+    "model": "proposition.Domain",
+    "pk": 1,
+    "fields": {
+      "name": "global",
+      "desc": "The world logic space."
+    }
+  }
+]

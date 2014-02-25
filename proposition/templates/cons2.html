@@ -1,0 +1,170 @@
+{% extends "common/base0.html" %}
+
+{% block head %}
+	<link rel="stylesheet" href="{{ STATIC_URL }}proposition/css/cons.css" />
+
+	<script>
+
+		/* 
+		* Javascript Server Interface 
+		* Should be a thin wrapper that is nearly data-only
+		* But should it invoke controller stuff or pass information?
+		*/
+
+		tacowrap.server = {};
+		tacowrap.server.propositions = [];
+
+		{% for prop in propositions %}
+			tacowrap.server.propositions.push({
+				id: {{ prop.id }},
+				text: "{{ prop.text }}"
+			});
+		{% endfor %}
+
+	</script>
+
+	<script src="{{ STATIC_URL }}proposition/js/prop.js"></script>
+
+	<script>
+		(function() {
+
+			$(document).ready(function() {
+
+				window.premisesWidget = new tacowrap.prop.PropositionWidget()
+				premisesWidget.populate(function() {
+					$("#premises").append( premisesWidget.domElement );
+				});	
+
+				window.conclusionWidget = new tacowrap.prop.PropositionWidget()
+				conclusionWidget.SELECTION_LIMIT = 1;
+				conclusionWidget.isVisible = false;
+				$("#conclusionWidget").hide();
+
+				(function() {
+
+					function show() {
+
+						$("#conclusionWidget").fadeIn();
+						$("#conclusionInputField").fadeOut();
+						$("#conclusionWidgetButton").html("Create a new Proposition Instead.");
+						
+						conclusionWidget.isVisible = true;
+
+					}
+
+					function hide() {
+
+						$("#conclusionWidget").fadeOut();
+						$("#conclusionInputField").fadeIn();
+						$("#conclusionWidgetButton").html("Select an existing Proposition Instead.");
+
+						conclusionWidget.isVisible = false;
+
+					}
+
+					$("#conclusionWidgetButton").on("click", function(ev) {
+					
+						if ( !conclusionWidget.isVisible ) {
+
+							if ( conclusionWidget.domElement == null ) {
+
+								conclusionWidget.populate(function() {
+								
+									$("#conclusionWidget").append( conclusionWidget.domElement );
+									
+									//$("#" + conclusionWidget.widgetId).css({ 'margin-top' : '10px' });
+									show();
+
+								});		
+
+							}
+
+							else { // not visible and cached
+								
+								show();
+
+							}
+
+						}
+
+						else { // visible widget
+
+							hide();
+
+						}
+						
+					}); // end on
+					
+				})(); // end closure
+
+
+				$("#submitFormButton").on("click", function(ev) {
+					var i;
+
+					console.log("Form submit");
+
+					var e = new tacowrap.prop.Entailment();
+					e.reason = $("#reasonTextField").val();
+
+
+					for (i = 0; i < premisesWidget.selected.length; i++) {
+
+						console.log( premisesWidget.selected );
+						e.premises.push(  premisesWidget.selected[i].pk  );
+
+					}
+
+					if ( conclusionWidget.isVisible ) {
+
+						e.conclusion = conclusionWidget.selected[0].pk;
+					}
+
+					else {
+
+						e.conclusion = $("#conclusionTextField").val();
+					}
+
+					if ( e.create() ) {
+						console.log("Success");
+					}
+					else {
+						console.log("Fail");
+					}
+				});
+
+			});
+
+		})();
+	</script>
+{% endblock %}
+
+{% block content %}
+	<div id="consWrapper" class="consWrapper">
+		<h2>Select Premises:</h2>
+		<div id="premises" class="five columns" style="border: solid 1px #DDD; padding: 10px;">
+			
+		</div>
+		<div class="four columns">
+				
+			<h2>Reason</h2>
+			<textarea name="" id="reasonTextField" cols="30" rows="10" placeholder="ex. Transitivity"></textarea>
+
+		</div>
+		<div id="conclusions" class="five columns">
+			<h3>Conclusion: </h3>
+			<button id="conclusionWidgetButton">Select Existing Proposition Instead</button>
+			<div id="conclusionInputField">
+				<h4>Make New Proposition</h4>
+				<input type="text" value="" id="conclusionTextField" size="256" />
+			</div>
+			<div id="conclusionWidget" style="border: solid 1px #DDD; padding: 10px;">
+				<h4>Select a Proposition</h4>
+			</div>
+		</div>
+
+		<div style="clear: both"></div>
+		<div style="height: 3em;"></div>
+
+		<button id="submitFormButton">Submit</button>
+	</div>
+{% endblock %}

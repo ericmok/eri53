@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+
+{% block scripts%}
+	<style>
+		.proposition
+		{
+			border: solid 1px #DDD;
+			padding: 0.8em;
+			height: 1em;
+		}
+		.propText
+		{
+			/*width: 300px;*/
+			text-align: left;
+		}
+		.propLinks
+		{
+			/*width: *px;*/
+			text-align: right;
+		}
+		b
+		{
+			font-weight: bold;
+		}
+	</style>
+
+	<script>var tacowrap = {};</script>
+	<script src="{{ STATIC_URL }}common/js/jquery-2.0.0.min.js"></script>
+	<script src="{{ STATIC_URL }}common/js/moment-2.1.0.min.js"></script>
+	<script src="{{ STATIC_URL }}proposition/js/build.js"></script>
+	
+	<script>
+		$(document).ready(function() {
+	
+			window.propositionExplorer = new tacowrap.prop.PropositionExplorer("propositionExplorer");
+			propositionExplorer.initialize();
+			propositionExplorer.generateElement();
+			
+			$("#propositionExplorer").append( propositionExplorer.domElement );
+			
+		});
+	</script>
+{% endblock %}
+
+{% block content %}
+
+	<div class="propositionWrapper">
+		
+		<div>
+			<article style="width: 33em">
+				<p>
+					This is a project based on the idea of being able to collaborate with my professors on logical arguments.
+					Very often I find myself constructing huge lines of reasonings in my head.
+					I try to be a logical guy.
+					Unfortunately, it is very hard to validate ambitious arguments with grand conclusions when they are 
+					crafted in an essay format.
+					<strong>Any</strong> logical flaw caught in any part of a logical chain is basis for not appreciating
+					the end conclusion. 
+				</p>
+				<p>
+					Just because an argument is false, doesn't mean the conclusion is false. Dismissing the
+					conclusion is not necessarily correct. But at the very least, the rigorous analysis of a logical chain
+					guarantees, that any proposition made within the chain is not incorrect (with regard to a
+					<a href="http://en.wikipedia.org/wiki/Formal_system">formal system</a>).
+				</p>
+				<p>  
+					<h3>
+						Is it possible to make an internet hub with which the entire world can use to contribute to a single
+						coherent logical chain?
+					</h3>
+				</p>
+				<p>
+					If this is possible, then perhaps <strong>direct democracy</strong> can exist: 
+					a democracy (not a republic) where every person can have a voice in political argument.
+					Historically, this has been logistically impossible because it is hard to have a coherent, 
+					rigorously analyzed discussion among several millions of people at once. 
+					This allows politicians to exploit rhetoric and utilize logical fallacies such as ad hominem and converse logic
+					against the public.
+					I think direct democracy may have its roots in the internet.
+				</p>
+				<p>
+					A single coherent logical graph can be used to explore all political ideas. 
+					People can analyze individual propositions in the logical graph and comment about its "truthiness".
+				</p>
+				<img src="{{ STATIC_URL }}proposition/images/logicalGraph.jpg" />
+				<p>
+					Is it possible for the entire universe of human knowledge to be parsed into a gigantic graph of propositions and entailments? 
+				</p>
+
+				<p>
+					I have recently found out that software for analyzing arguments already existed: 
+					<a href="http://en.wikipedia.org/wiki/Interactive_theorem_proving">Interactive Theorem Proving</a>.
+					However, current implementations are not currently designed for such large scale intents.
+				</p>
+				<p>
+					<small>Further motivation for this project is the question:<br/>
+					Is it possible for a machine learning algorithm to use this "graph of truth" to
+					guess logical connections between premises and conclusions? People might be able to use machines to 
+					do their thinking for them...</small> 
+				</p>
+				<p>
+					In a formal argument, there are premises and conclusions. <br/>
+					If the premises are true, then the argument may entail a true conclusion depending on whether
+					it uses a proper <a href="http://en.wikipedia.org/wiki/Rule_of_inference">rule of inference</a>.					
+					Thus, an argument can be thought of as a directed acyclic graph where the nodes are propositions
+					that are true, and the edges are entailments. 
+				</p>
+				<p>
+					A user should be able to comment on the truth of any proposition or inspect entailments and the derived
+					conclusions. A voting system may be used to keep the logical graph in a state of integrity.
+				</p>
+				<p>
+					<ul>
+						<li>Each proposition is either derived a priori or a posteriori.</li>
+						<li>Statistical evidence can be used to measure the chances of "truthiness" of each proposition.</li>
+						<li>All logical entailments derive from propositions with varying levels of "truthiness" and the conclusions
+					themselves will have their "truthiness" calculated from the network.</li>
+					</ul>
+				</p>
+				<p>				
+					In short: This is an incompleted Django app that I worked for based on some weird idea of having
+					a logical graph.
+				</p>
+				
+				<p>
+					<h3>Building a JSON api</h3>
+				</p>
+				<p>
+					I have found that building a RESTful api is rather hard. 
+					Disregarding some RESTful practices, I have opted to make a JSON api instead.
+					Things I learned building this project: 
+				</p>
+				<ul>
+					<li>Separate serializers must exist: one on the server side, and one on the client side.</li>
+					
+					
+					<li>Virtual resources is kind of tricky to maintain.</li>
+				</ul>
+			</article>	
+		</div>
+		
+		<div style="text-align: center; margin-top: 10em;">
+			<h2>Enter your proposition</h2>
+			<form action="" method="POST">
+				{% csrf_token %}
+				<input type="text" name="prop" value="" id="prop" maxlength="256" size="256" autocomplete="off" />
+				<input type="submit" value="Add" style="margin-top: 1em;" />
+			</form>
+
+			<div id="propositionExplorer">
+				<div></div>
+			</div>
+
+			<div style="text-align: left; display: none;">
+				<b>Premises:</b><br/>
+				Test0 <br/>
+				<b>Conclusion:</b><br/>
+				Some conclusion. <br/>
+				<b>Reason: </b><br/>
+				Some reason
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

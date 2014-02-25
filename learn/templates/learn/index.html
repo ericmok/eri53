@@ -1,0 +1,513 @@
+{% extends "learn/base0.html" %}
+
+{% block title %}SVM Machine Learning{% endblock %}
+
+{% block content %}
+
+<style scoped="scoped">
+	#mLWrapper
+	{
+		color: black;
+		font-family: Arial;
+	}
+</style>
+
+<div id="mLWrapper" style="margin: 20px;">
+	<h3>libSVM using Python</h3>
+
+
+	<div style="color: #444; class="six columns">
+		<p>
+			Welcome to /learn/. This is my play-around toy with libSVM powered by a Javascript/AJAX interface
+			with a Django web server backend. 
+		</p>
+		<p>
+			By choosing a label color, you can add a point to my dataset. 
+			Each point you add is sent via AJAX to a database. 
+			After adding points, <span style="color: #F77">train</span> the SVM on the dataset.
+		</p>
+		<p> 
+			Then click <span style="color: #F77">predict all</span> to see the classifier
+			in action. Press "clear" to remove the prediction to add more points and train/predict again.
+			Pressing predict instead of predict all makes 144 separate AJAX requests to
+			get a separate prediction at each prediction point. The loading effect is cool but
+			if you can, please spare my bandwidth :) 
+		</p>
+		<p>
+			
+		</p>
+	</div>
+
+	Points Loaded: {{ points|length }}
+{% csrf_token %}
+ 
+<div>
+	<div style="float: left">
+		<svg id="svgBox"
+			style="border: solid 1px #AAA"
+			width="300"
+			height="300"
+			xmlns="http://www.w3.org/2000/svg" version="1.1">
+		</svg>
+	</div>
+	<div style="float: left">
+		<div>
+			Click to Add point
+		</div> 
+		<button id="labelChanger0" style="width: 100px; height: 30px; border: solid 1px blue; padding: 5px;">
+			Label 1
+		</button>
+		<br/>
+		<button id="labelChanger1" style="width: 100px; height: 30px; border: solid 1px red; padding: 5px;">
+			Label 2 
+		</button>
+		<br/>
+		<button id="labelChanger3" style="width: 100px; height: 30px; border: solid 1px purple; padding: 5px;">
+			Label 3 
+		</button>
+		<br/>
+		<button id="labelChanger4" style="width: 100px; height: 30px; border: solid 1px yellow; padding: 5px;">
+			Label 4 
+		</button>
+	
+	</div>
+	
+	<div style="clear: both"></div>
+</div>
+
+<div id="svgStatus">
+	Status
+</div>
+<button id="trainButton" style="width: 200px; height: 40px; border: solid 1px #AAF;">
+	Train the Classifier
+</button>
+<!-- 
+<button id="predictButton" style="width: 200px; height: 40px; border: solid 1px #AFF;">
+	Predict (Sends 144 AJAX calls)
+</button>
+ -->
+<button id="predictAllButton" style="width: 200px; height: 40px; border: solid 1px #AFF;">
+	Predict All
+</button>
+
+<button id="clearButton" style="width: 200px; height: 40px; border: solid 1px #AFF;">
+	Clear Predictions
+</button>
+
+
+
+<div id="status"></div>
+
+</div> <!-- end mLWrapper -->
+
+<script>
+	
+	var svmBox = (function($) {
+		
+		/////////////////////////////////////////
+		// Variables
+		/////////////////////////////////////////
+		var svmBox = function (id) {	
+			
+			this.currentX = 0;
+			this.getCurrentX = function () {
+				return this.currentX;
+			}
+			
+			this.currentY = 0;
+			this.getCurrentY = function () {
+				return this.currentY;
+			}
+			
+			this.currentLabel = 0;
+			this.getCurrentLabel = function() {
+				return this.currentLabel;
+			}
+			
+			this.width = 300;
+			this.height = 300;
+			this.initialized = false;
+			this.jElement = null;
+			//this.serverURL = "http://localhost:8000/learn/ajax/";
+			this.serverURL = "/learn/ajax/";
+			this.debugLevel = 3;
+			this.colorOptions = ["#3399FF", "#CC0000", "#FF9900", "#CC00FF", "#FFCC00", "#33CC33"];
+
+			this.messages = new Array();
+			this.jStatusDiv = null;
+			
+			this.selectedPoint = null;
+			
+			this.init(id);
+		}
+		
+		/////////////////////////////////////////
+		// Constructor
+		/////////////////////////////////////////
+		svmBox.prototype.init = function (id) {
+			console.log("Initializing svmBox");
+			this.jElement = $("#" + id);
+			
+			if ( !this.jElement ) {
+				console.log("svmBox Failed Initialization. Element NULL");	
+			} 
+			else {
+				this.initialized = true;
+				this.bindElement();
+				this.width = this.jElement.width();
+				this.height = this.jElement.height();
+			}
+			console.log("Initialization Success");
+		}
+	
+		/////////////////////////////////////////
+		// Bind jElement to Add a Point
+		/////////////////////////////////////////
+		svmBox.prototype.bindElement = function () {
+			var self = this;
+			
+			this.jElement.click(function (ev) {
+				self.addPoint(ev);	
+			});
+		
+		}
+		
+
+		/////////////////////////////////////////
+		// Add a message to the message array
+		/////////////////////////////////////////
+		svmBox.prototype.log = function (msg) {
+			var self = this;
+			
+			this.messages.push(msg);
+			console.log(msg);
+			
+			if (this.jStatusDiv != null) {
+				this.jStatusDiv.html( this.messages.length[self.messages.length - 1]);				
+			}
+		}
+	
+		
+		/////////////////////////////////////////
+		// Add Point
+		// action: add
+		/////////////////////////////////////////
+		svmBox.prototype.addPoint = function (ev) {
+			var self = this;
+			
+			var newPointX = this.currentX = ev.pageX - this.jElement.offset().left;
+			newPointX = newPointX / this.width;
+			
+			var newPointY = this.currentY = ev.pageY - this.jElement.offset().top;
+			newPointY = newPointY / this.height;
+			
+			var currentLabel = this.currentLabel;
+			
+			this.log("label: " + self.currentLabel);
+			
+			$.ajax({
+				type: "POST",
+				url: self.serverURL,
+				data: {"csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").attr("value"),
+					"x": newPointX,
+					"y": newPointY,
+					"label": self.currentLabel,
+					"action": "add"
+					//"username": $("#usernameField").val(),
+					//"password": $("#passwordField").val()
+				},
+				success:  function(data, textStatus, xhr) {
+					//console.log("Recieved: " + data.x + "," + data.y + " [" + data.label + "]");
+					//self.createSVGPoint(data.x, data.y, data.label);
+					self.createSVGPoint(newPointX * self.width, newPointY * self.height, self.currentLabel);
+					self.log("New Point Added");
+				},
+				beforeSend: function () {
+					self.log("Sending New Point... ");
+				},
+				datatype: "json"
+			});
+		}
+		
+		/////////////////////////////////////////
+		// registerButton
+		// Register Button
+		// Usages: <svmBox obj>.registerButton(<element id>, "changeLabel", 0)
+		/////////////////////////////////////////
+		svmBox.prototype.registerButton = function (id, action, label) {
+			var self = this;
+			
+			if ( action == "changeLabel" ) {
+				$("#" + id).click(function(ev) {
+					self.changeLabel(label);
+				});
+			}
+			
+			if ( action == "predict" ) {
+				$("#" + id).click(function(ev) {
+					self.predict();
+				});
+			}
+			
+			if ( action == "predictAll" ) {
+				$("#" + id).click(function (ev) {
+					self.predictAll();
+				});
+			}
+			
+			if ( action == "clear" ) {
+				$("#" + id).click(function (ev) {
+					self.removePointClass("overlay");
+				})
+			}
+			
+			if ( action == "train") {
+				$("#" + id).click(function (ev) {
+					self.train();
+				})
+			}
+		
+			if ( action == "status" ) {
+				self.jStatusDiv = $("#" + id);
+			}
+		}
+		
+		/////////////////////////////////////////
+		// Change Label
+		/////////////////////////////////////////
+		svmBox.prototype.changeLabel = function(label) {
+			this.currentLabel = label;
+			this.log("Label changed to: " + label + ". ");
+		}
+		
+		/////////////////////////////////////////
+		// Train
+		/////////////////////////////////////////
+		svmBox.prototype.train = function () {
+			var self = this;
+			
+			$.ajax({
+				type: "POST",
+				url: self.serverURL,
+				data: {
+					"csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").attr("value"),
+					"action": "train"
+					//"username": $("#usernameField").val(),
+					//"password": $("#passwordField").val()
+				},
+				success: function(data, textStatus, xhr) {
+					self.log("Trained: " + data.status);
+				},
+				beforeSend: function () {
+					self.log("Retraining...");
+				},
+				datatype: "json",
+			});	
+		}
+		
+		/////////////////////////////////////////
+		// Populate 
+		// action: Read
+		// Reads all the points from the database and repopulate the svg
+		/////////////////////////////////////////
+		svmBox.prototype.populate = function () {
+			var self = this;
+			
+			$.ajax({
+				type: "POST",
+				url: self.serverURL,
+				data: {
+					"csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").attr("value"),
+					"action": "read"
+					//"username": $("#usernameField").val(),
+					//"password": $("#passwordField").val()
+				},
+				success: function(data, textStatus, xhr) {
+					self.log(data.length + " Points Received.");
+					for (var i = 0; i < data.length; i++) {
+						recX = data[i][0] * self.width;
+						recY = data[i][1] * self.height;
+						
+						self.createSVGPoint(recX, recY, data[i][2]);
+					}
+				},
+				beforeSend: function () {
+					self.log("Receiving All Points... ");
+				},
+				datatype: "json",
+			});		
+		}
+		
+		/////////////////////////////////////////
+		// Create Point for SVG element
+		/////////////////////////////////////////
+		svmBox.prototype.createSVGPoint = function (x, y, label) {
+			var self = this;
+			
+			var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+			rect.setAttribute("x", x - 1);
+			rect.setAttribute("y", y - 1);
+			rect.setAttribute("width", "4");
+			rect.setAttribute("height", "4");
+			
+			// Calculate color
+			var color = "#DDD";
+
+			if (label >= 0 && label < this.colorOptions.length)
+				color = this.colorOptions[label];
+			rect.setAttribute("style", "fill: " + color ); 
+
+			this.jElement.append(rect);
+			
+
+			$(rect).mouseover(function() {
+				self.selectedPoint = $(this);
+				$(this).attr("width", 8);
+				$(this).attr("height", 8);
+			}).mouseout(function() {
+				self.selectedPoint = null;
+				$(this).attr("width", 4);
+				$(this).attr("height", 4);
+			});
+			
+		}
+		
+		/////////////////////////////////////////
+		// Create Point for SVG element Deletable
+		/////////////////////////////////////////
+		svmBox.prototype.createSVGPointWithClass = function (overlayClass, x, y, label) {
+			
+			var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+			rect.setAttribute("x", x);
+			rect.setAttribute("y", y);
+			rect.setAttribute("width", 300.0/15 + 3); //3
+			rect.setAttribute("height", 300/15 + 3);
+			rect.setAttribute("opacity", "0.5");
+			rect.setAttribute("class", overlayClass);
+			
+			// Calculate color
+			var color = "#DDD";
+
+			if (label >= 0 && label < this.colorOptions.length)
+				color = this.colorOptions[label];
+			rect.setAttribute("style", "fill: " + color ); 
+
+			this.jElement.append(rect);
+		}
+
+		/////////////////////////////////////////
+		// Remove Points Belonging to a Class
+		/////////////////////////////////////////
+		svmBox.prototype.removePointClass = function(overlayClass) {
+			$("." + overlayClass).remove();
+		}
+		
+		/////////////////////////////////////////
+		// Predict all points. Overlays a grid of points
+		/////////////////////////////////////////
+		svmBox.prototype.predictAll = function () {
+			var self = this;
+			
+			$.ajax({
+				type: "POST",
+				url: self.serverURL,
+				data: {
+					"csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").attr("value"),
+					"width": 300,
+					"height": 300,
+					"action": "predictAll"
+					//"username": $("#usernameField").val(),
+					//"password": $("#passwordField").val()
+				},
+				success: function(data, textStatus, xhr) {
+					for (var i = 0; i < data.length; i++) {
+						self.createSVGPointWithClass("overlay",
+								data[i].x * self.width,
+								data[i].y * self.height,
+								parseInt( data[i].label )
+								);
+					}
+					/*self.createSVGPointWithClass("overlay", 
+										data.x * self.width, 
+										data.y * self.height, 
+										data.label);
+					/**/
+					console.log(data);
+				},
+				beforeSend: function () {
+					self.log("Predicting... ");
+				},
+				datatype: "json",
+			});		
+		}
+		
+		/////////////////////////////////////////
+		// Predict all points ONE-by-ONE. Overlays a grid of points
+		/////////////////////////////////////////
+		svmBox.prototype.predict = function () {
+			var self = this;
+			
+			var counterX = 0;
+			var counterY = 0;
+			
+			for (counterX = 0 ; counterX < 300; counterX += 25) {
+				for (counterY = 0; counterY < 300; counterY += 25) {
+					$.ajax({
+						type: "POST",
+						url: self.serverURL,
+						data: {
+							"csrfmiddlewaretoken": $("[name='csrfmiddlewaretoken']").attr("value"),
+							"x": 1.0 * counterX / self.width,
+							"y": 1.0 * counterY / self.height,
+							"label": 0,
+							"action": "predict"
+							//"username": $("#usernameField").val(),
+							//"password": $("#passwordField").val()
+						},
+						success: function(data, textStatus, xhr) {
+							//console.log(data.length + " Points Received.");
+							//for (var i = 0; i < data.length; i++) {
+// 							self.createSVGPoint(data.x * self.width, 
+// 												data.y * self.height, 
+// 												data.label);
+							//}
+							
+							self.createSVGPointWithClass("overlay", 
+												data.x * self.width, 
+												data.y * self.height, 
+												data.label);
+						},
+						beforeSend: function () {
+							self.log("Predicting... ");
+						},
+						datatype: "json",
+					});		
+				}
+			}
+			self.log("counterX: " + counterX);
+			self.log("counterY: " + counterY);
+		}
+		
+		return svmBox;
+	})(jQuery);
+	
+
+	var box = new svmBox("svgBox");
+	box.registerButton("labelChanger0", "changeLabel", 0);
+	box.registerButton("labelChanger1", "changeLabel", 1);
+	box.registerButton("labelChanger2", "changeLabel", 2);
+	box.registerButton("labelChanger3", "changeLabel", 3);
+	box.registerButton("labelChanger4", "changeLabel", 4);
+	box.registerButton("predictButton", "predict");
+	box.registerButton("predictAllButton", "predictAll");
+	box.registerButton("trainButton", "train");
+	box.registerButton("clearButton", "clear");
+	box.registerButton("svgStatus", "status");
+	
+	box.populate();
+
+
+</script>
+
+
+{% endblock %}

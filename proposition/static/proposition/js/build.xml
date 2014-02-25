@@ -1,0 +1,26 @@
+<project name="build" default="hello">
+    
+    <property name="version" value="0.1.0" />
+    <property name="build.dir" value="." />
+    <property name="models.dir" value="models" />
+    
+    <tstamp>
+        <format property="current.timestamp" pattern="MM/DD/YYYY hh:mmaa" />
+    </tstamp>
+    
+    <target name="hello">
+        <echo>Build directory: ${build.dir}</echo>
+        
+        <concat destfile="${build.dir}/build.js" fixlastline="yes">
+            <header>
+/* 
+ * Compiled ${current.timestamp} EST 
+ * Author: Eric Mok
+ */
+            </header>
+            <filelist dir="${models.dir}" files="init.js proposition.js entailment.js propositiontag.js" />
+            <filelist dir="." files="widgets.js" />
+        </concat>
+    </target>
+    
+</project>

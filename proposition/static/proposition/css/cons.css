@@ -1,0 +1,57 @@
+/**
+#979797
+#666666
+#EEE
+#000
+#0088CC
+
+
+http://www.colourlovers.com/palette/1588875/philosophy_of_tree
+http://www.colourlovers.com/palette/692363/An_Elegant_Truth
+7D96FF
+F4F1FE
+BEB4FA
+FBFFE5
+EDF7FF
+**/
+
+.prop
+{
+	margin-bottom: 3px;
+	padding: 10px;
+	border: solid 1px #F4F1FE;
+
+	-webkit-transition: 0.3s linear border background-color;
+	-moz-transition: 0.3s linear border background-color;
+	-ms-transition: 0.3s linear border background-color;
+	-o-transition: 0.3s linear border background-color;
+	transition: 0.3s linear border background-color;
+}
+
+.propHovered
+{
+	margin-bottom: 3px;
+	padding: 10px;
+	border: solid 1px #979797;
+
+	-webkit-transition: 0.3s linear border background-color;
+	-moz-transition: 0.3s linear border background-color;
+	-ms-transition: 0.3s linear border background-color;
+	-o-transition: 0.3s linear border background-color;
+	transition: 0.3s linear border background-color;
+}
+
+.propSelected
+{
+	margin-bottom: 3px;
+	padding: 10px;
+	background-color: #FFF;
+	border: solid 2px #0088cc;
+	font-weight: bold;
+
+	-webkit-transition: 0.3s linear border background-color;
+	-moz-transition: 0.3s linear border background-color;
+	-ms-transition: 0.3s linear border background-color;
+	-o-transition: 0.3s linear border background-color;
+	transition: 0.3s linear border background-color;
+}

@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block scripts%}
+	<style>
+		.proposition
+		{
+			border: solid 1px #DDD;
+			padding: 0.8em;
+			height: 1em;
+		}
+		.propText
+		{
+			/*width: 300px;*/
+			text-align: left;
+		}
+		.propLinks
+		{
+			/*width: *px;*/
+			text-align: right;
+		}
+		b
+		{
+			font-weight: bold;
+		}
+	</style>
+
+	<script>var tacowrap = {};</script>
+	<script src="{{ STATIC_URL }}common/js/jquery-2.0.0.min.js"></script>
+	<script src="{{ STATIC_URL }}common/js/moment-2.1.0.min.js"></script>
+	<script src="{{ STATIC_URL }}proposition/js/build.js"></script>
+	
+	<script>
+		$(document).ready(function() {
+	
+			window.propositionExplorer = new tacowrap.prop.PropositionExplorer("propositionExplorer");
+			propositionExplorer.initialize();
+			propositionExplorer.generateElement();
+			
+			$("#propositionExplorer").append( propositionExplorer.domElement );
+			
+		});
+	</script>
+{% endblock %}
+
+{% block content %}
+
+	<div class="propositionWrapper">
+		<h1 style="position: absolute">PROP2</h1>
+		<div style="text-align: center; margin-top: 10em;">
+			<h2>Enter your proposition</h2>
+			<form action="" method="POST">
+				{% csrf_token %}
+				<input type="text" name="prop" value="" id="prop" maxlength="256" size="256" autocomplete="off" />
+				<input type="submit" value="Add" style="margin-top: 1em;" />
+			</form>
+
+			<div id="propositionExplorer">
+				<div></div>
+			</div>
+
+			<div style="text-align: left; display: none;">
+				<b>Premises:</b><br/>
+				Test0 <br/>
+				<b>Conclusion:</b><br/>
+				Some conclusion. <br/>
+				<b>Reason: </b><br/>
+				Some reason
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
