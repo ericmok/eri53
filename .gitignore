@@ -1,3 +1,4 @@
 *.dbsqlite3
+secret.key
 *.pyc
 node_modules/
