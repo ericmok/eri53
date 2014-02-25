@@ -1,16 +1,27 @@
+{% load staticfiles %}
 <!DOCTYPE html>
 <html>
     <head>
         <title>{% block title %}eric{% endblock %}</title>
         <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="{% static 'website/stylesheets/main.css' %}" rel="stylesheet" />
     </head>
     <body>
         <div class="container">
             <div class="row">
-                <div class="col-md-3">
-                    Sidebar
+                <div class="col-sm-3 sidebar">
+                    <div class="logo">
+                        <img src="{% static 'website/images/logo.png' %}" class="img-responsive" />
+                    </div>
+                    <nav>
+                        <ul>
+                            <li><a href="{% url 'about' %}" {% if page_about %}class="active"{% endif %}>About</a></li>
+                            <li><a href="{% url 'projects' %}" {% if page_projects %}class="active"{% endif %}>Projects</a></li>
+                            <li><a href="http://blog.eri5.com">Blog</a></li>
+                        </ul>
+                    </nav>
                 </div>
-                <div class="col-md-9">
+                <div class="col-sm-9 content">
                     {% block content %}
                     {% endblock %}
                 </div>  

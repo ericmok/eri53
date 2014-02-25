@@ -1,0 +1,74 @@
+@sidebar-left-padding: 1.2em;
+
+.sidebar
+{
+    
+    .logo
+    {
+        margin: 1em 0 1em (@sidebar-left-padding + @sidebar-left-padding/2);
+        
+        img 
+        {
+            display: inline-block;
+        }
+        
+        @media(max-width: 768px)
+        {
+            text-align: center;
+            margin: 0em;
+        }
+    }
+    
+    /* This is exposed as well as positionally in a nav list */
+    .nav-link
+    {
+        padding: 0.8em @sidebar-left-padding;
+        display: block;
+
+        border-radius: 8px;
+        background-color: #FFF;
+
+        font-size: 2em;
+
+        -webkit-transition: background-color 0.3s ease;
+        -o-transition: background-color 0.3s ease;
+        -moz-transition: background-color 0.3s ease;
+        transition: background-color 0.3s ease;
+
+        &:hover
+        {
+            background-color: #DEDEDE;
+        }
+        
+        &.active
+        {
+            background-color: #ACACAC;
+            color: #FEFEFE;
+        }
+    }
+    
+    nav 
+    {
+        ul
+        {
+            margin: 0em;
+            padding: 0em;
+            
+            & > li
+            {
+                list-style-type: none;
+                
+                @media(max-width: 990px)
+                {
+                    text-align: center;
+                }
+                
+                & > a
+                {
+                    .nav-link
+                }
+            }   
+        }
+    }
+    
+}

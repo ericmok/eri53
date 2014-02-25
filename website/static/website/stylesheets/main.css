@@ -1,0 +1,68 @@
+.sidebar {
+  /* This is exposed as well as positionally in a nav list */
+}
+.sidebar .logo {
+  margin: 1em 0 1em 1.8em;
+}
+.sidebar .logo img {
+  display: inline-block;
+}
+@media (max-width: 768px) {
+  .sidebar .logo {
+    text-align: center;
+    margin: 0em;
+  }
+}
+.sidebar .nav-link {
+  padding: 0.8em 1.2em;
+  display: block;
+  border-radius: 8px;
+  background-color: #FFF;
+  font-size: 2em;
+  -webkit-transition: background-color 0.3s ease;
+  -o-transition: background-color 0.3s ease;
+  -moz-transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease;
+}
+.sidebar .nav-link:hover {
+  background-color: #DEDEDE;
+}
+.sidebar .nav-link.active {
+  background-color: #ACACAC;
+  color: #FEFEFE;
+}
+.sidebar nav ul {
+  margin: 0em;
+  padding: 0em;
+}
+.sidebar nav ul > li {
+  list-style-type: none;
+}
+@media (max-width: 990px) {
+  .sidebar nav ul > li {
+    text-align: center;
+  }
+}
+.sidebar nav ul > li > a {
+  padding: 0.8em 1.2em;
+  display: block;
+  border-radius: 8px;
+  background-color: #FFF;
+  font-size: 2em;
+  -webkit-transition: background-color 0.3s ease;
+  -o-transition: background-color 0.3s ease;
+  -moz-transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease;
+}
+.sidebar nav ul > li > a:hover {
+  background-color: #DEDEDE;
+}
+.sidebar nav ul > li > a.active {
+  background-color: #ACACAC;
+  color: #FEFEFE;
+}
+.content .bio-info {
+  display: block;
+  margin: 0 0 2em 0.5em;
+  color: #888;
+}
