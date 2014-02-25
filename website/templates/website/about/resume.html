@@ -1,5 +1,190 @@
-{% extends 'website/layout/base.html' %}
+<!DOCTYPE html>
+<html>
+<head>
+	 <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="all" /> 
+	<style type="text/css">
+		.resumeWrapper
+		{
+			font-family: Times New Roman;
+			max-width: 750px;
+		}
+		.resumeWrapper ul
+		{
+			padding-left: 2.1em;
+		}
+		.sectionTitle
+		{
+			margin-top: 1em;
+			text-align: center;
+		}
+		.itemQualifier
+		{
+			font-family: Times New Roman;
+			color: #797979;
+		}
+		.experienceTitle
+		{
+		}
+		.experienceDate
+		{
+			font-family: Times New Roman;
+			float: right;
+		}
+		.experienceDate:after
+		{
+			display: table;
+			content: "";
+			clear: both;
+		}
+		.techy
+		{
+			font-family: Arial, Helvetica, sans-serif;
+		}
+		@media all and (max-width: 750px) {
+			.col-md-6 {
+				float: left;
+			}
+		}
+		@media print {
+			.visible-print  { display: inherit !important; }
+			.hidden-print   { display: none !important; }
+		}
+	</style>
+</head>
+<body>
+<div class="resumeWrapper container">
+	<header class="col-xs-12" style="margin-bottom: 1em;">
+		<!--  <h2>Eric Mok</h2> -->
+	</header>
+	<div class="headerRow" style="overflow: hidden; border-bottom: solid 1px #CCC;">
+		<div class="col-xs-4">
+			<h1 style="margin: 0px; padding: 0px;">Eric Mok</h1>
+			<small>Seeking Internship / Entry-level Position</small>
+		</div>
+		<div class="col-xs-4" style="text-align: center;">
+			<div style="position: relative; top: 0.7em;">
+				68-34 Harrow St.<br/>
+				Forest Hills, NY 11375
+			</div>
+		</div>
+		<div class="col-xs-4" style="text-align: right; height: auto; margin-top: 0.0em;">
+			<div>
+				eri5mok<span style="display: none">@</span>@<span>gm</span>ail.<span style="display: none">l.c</span>c<span style="display: none"></span>om<br/>
+				Website: <strong class="techy">eri5.com</strong><br/>
+				646-300-0828
+			</div>
+		</div>
+		<div style="clear:both;"></div>
+	</div>
+	
+	<section class="educationSection col-xs-12">
+		<h3 class="sectionTitle" style="text-align: center;">Education</h3>
+		<div>
+			<div>
+				<strong>Stony Brook University</strong>
+			</div>
+			<div>
+				<strong>Bachelor of Science in Computer Science, </strong><i>May 2012</i>
+				<div style="margin-top: 0.2em;">
+					<div class="col-xs-3">
+						<div style="display: table-cell; vertical-align: middle; height: 2.6em;">
+							<strong>Courses Include:</strong>
+						</div>
+					</div> 
+					<div class="col-xs-9">
+						Algorithms, Computer Graphics, Computer Networks, Computer Vision, Database Systems, Game Programming,
+						Internet Programming, Electrical Circuit Analysis
+					</div>
+					<div style="clear:both"></div>
+				</div>
+				<div class="col-xs-12" style="margin-top: 0.4em;">
+						<strong>Interests: </strong>Web technologies, Machine Learning, Philosophy
+				</div>
+			</div>
+		</div>
+	</section>
+	<section class="skillsSection col-xs-12" style="margin-top: 1em;">
+		<h3 class="sectionTitle" style="text-align: center;">Skills</h3>
 
-{% block content %}
-    Resume
-{% endblock %}
+		<div class="col-md-6">
+			<strong>Strengths</strong>
+			<ul>
+				<li>HTML5</li>
+				<li>Javascript<em>*</em> <small class="itemQualifier">+ jQuery / Angular</small></li>
+				<li>CSS <small class="itemQualifier">+ Responsive Web Layouts <!-- Mobile Friendly --></small></li>
+				<li>Python</li>
+				<li>Django Web Framework</li>
+				<li>Java</li>
+				<li>C++</li>
+			</ul>
+			<strong>Basic</strong>
+			<ul>
+				<li>Git</li>
+				<li>OpenGL</li>
+				<li>SQL</li>
+				<li>PHP</li>
+			</ul>
+
+		</div>
+		<div class="col-md-6">
+				<strong>Software</strong>
+				<ul>
+					<li>Eclipse / Sublime Text / Visual Studio</li>
+					<li>Microsoft Word / Excel / PowerPoint</li>
+					<li>Adobe Photoshop</li>
+				</ul>
+			
+				<strong>Operating Systems</strong>
+				<ul>
+					<li>Windows 7</li>
+					<li>Linux (Ubuntu, Mint)</li>
+				</ul> 
+			
+			<strong>I am learning</strong>
+				<ul>
+					<li>RESTful API Design</li>
+					<li>Node.js</li>
+					<li>Ember</li>
+					<li>Android App Development</li>
+				</ul>
+
+			<strong>Additionally</strong>
+				<ul>
+					<li>
+						Can speak basic Cantonese
+					</li>
+				</ul> 
+				
+
+		</div>
+		<div style="clear:both;"></div>
+	</section>
+	<section class="currentWorkSection">
+		<h3 class="sectionTitle">Experience</h3>
+		<strong class="experienceTitle">Data Entry, Anzor Jewelry Corp (Manhattan, NY)</strong><small class="experienceDate"> July 2012 - November 2013</small>
+		<p>
+			Maintained online marketing activies by managing inventory of thousands of items on eBay. Also provided tech support for an e-commerce website.
+		</p>
+		<strong class="experienceTitle">Webmaster, Earring King Jewelry (Manhattan, NY)</strong><small class="experienceDate"> June 2012 - Present</small>
+		<p>
+			Responsible for design and maintenance of a company website at ekjewelry.com employing a Django backend.
+		</p>
+		<strong class="experienceTitle">Tutor/Chaperone, Pell Street Mentorship (Manhattan, NY)</strong><small class="experienceDate">June - August 2011</small>
+		<p>
+			Planned and executed Math and English lessons for children ages 8 through 10 for a Summer Program.
+		</p>
+	</section>
+	<section>
+		<h3 class="sectionTitle">Most Recent Project</h3>
+		<strong class="experienceTitle techy">http://blog.eri5.com</strong><small class="experienceDate">September 2013 - February 2014</small>
+		<p>
+			A Single Page Web Application built to learn AngularJS with a Django-backed RESTful API.
+		</p>
+		<p>
+			Employs Python's Natural Language Processing Toolkit in order to allow for a natural version control system for pieces of English writing.
+			Users also have the ability comment on individual sentences. 
+		</p>
+	</section>
+</div>
+</body>
+</html>
